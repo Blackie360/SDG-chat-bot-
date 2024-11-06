@@ -3,8 +3,14 @@ import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
-const prisma = new PrismaClient();
-const baseUrl = "http://localhost:3000"; // Ensure this is your correct base URL
+let prisma;
+
+if (!global.prisma) {
+  global.prisma = new PrismaClient();
+}
+prisma = global.prisma;
+
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -21,8 +27,7 @@ const handler = NextAuth({
   ],
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // After a successful login, redirect to the dashboard
-      return `${baseUrl}/dashboard`;  // Redirects to /dashboard
+      return `${baseUrl}/dashboard`;
     },
     async session({ session, user }) {
       if (session.user) {
@@ -36,6 +41,7 @@ const handler = NextAuth({
     signOut: '/',
     error: '/',
   },
+  debug: true, // Enable detailed logs
 });
 
 export { handler as GET, handler as POST };
