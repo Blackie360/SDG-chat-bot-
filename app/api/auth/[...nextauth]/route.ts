@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
-let prisma;
+let prisma: PrismaClient;
 
 if (!global.prisma) {
   global.prisma = new PrismaClient();
