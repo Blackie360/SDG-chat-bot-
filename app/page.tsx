@@ -9,19 +9,33 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 
+interface GitHubUserData {
+  avatar_url: string;
+  name: string;
+  login: string;
+  bio: string;
+  followers: number;
+  following: number;
+  public_repos: number;
+}
+
 export default function Home() {
   const [username, setUsername] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<GitHubUserData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchGitHubData = async () => {
     if (!username) return;
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`https://api.github.com/users/${username}`);
+      if (!response.ok) throw new Error("User not found");
       const data = await response.json();
       setUserData(data);
     } catch (error) {
+      setError("Error fetching GitHub data. Please check the username.");
       console.error("Error fetching GitHub data:", error);
     }
     setLoading(false);
@@ -55,6 +69,8 @@ export default function Home() {
             </Button>
           </div>
 
+          {error && <p className="text-red-500">{error}</p>}
+
           {userData && (
             <div className="w-full max-w-4xl space-y-8">
               <Card className="p-6">
@@ -62,14 +78,14 @@ export default function Home() {
                   <Image
                     width={50}
                     height={50}
-                    src={userData?.avatar_url}
+                    src={userData.avatar_url || "/default-avatar.jpg"}
                     alt={username}
                     className="w-24 h-24 rounded-full"
                   />
                   <div>
-                    <h2 className="text-2xl font-bold">{userData.name}</h2>
+                    <h2 className="text-2xl font-bold">{userData.name || "No Name Available"}</h2>
                     <p className="text-muted-foreground">@{userData.login}</p>
-                    <p className="mt-2">{userData.bio}</p>
+                    <p className="mt-2">{userData.bio || "No bio available"}</p>
                   </div>
                 </div>
               </Card>
@@ -117,6 +133,8 @@ export default function Home() {
                         height={500}
                         src={`https://github-profile-trophy.vercel.app/?username=${username}&theme=onedark&column=4`}
                         alt="GitHub Trophies"
+                        placeholder="blur"
+                        blurDataURL="/default-trophy-placeholder.jpg"
                         className="max-w-full"
                       />
                     </div>
@@ -131,9 +149,7 @@ export default function Home() {
                       <p className="text-muted-foreground mb-4">
                         Sign in with GitHub to unlock advanced insights and management features
                       </p>
-                      <Button
-                        onClick={() => signIn("github")}
-                      >
+                      <Button onClick={() => signIn("github")}>
                         <Github className="mr-2 h-4 w-4" />
                         Connect GitHub
                       </Button>
