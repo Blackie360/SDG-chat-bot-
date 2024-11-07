@@ -1,12 +1,30 @@
-import NextAuth from "next-auth";
+
+import { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;
+      githubData?: {
+        name: string;
+        githubId: string;
+        followers: Array<any>;
+        repos: Array<any>;
+        issues: Array<any>;
+        prs: Array<any>;
+        recentActivity: Array<any>;
+      };
+    };
+  }
+
+  interface User {
+    githubData?: {
       name: string;
-      email: string;
-      image: string;
+      githubId: string;
+      followers: Array<any>;
+      repos: Array<any>;
+      issues: Array<any>;
+      prs: Array<any>;
+      recentActivity: Array<any>;
     };
   }
 }

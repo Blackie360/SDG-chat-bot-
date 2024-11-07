@@ -42,6 +42,18 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+
+  githubId      String?  @unique
+  githubData    Json?    // Store GitHub data as JSON (followers, repos, issues, PRs)
+  followers     Json?    // Store followers as a list of GitHub follower objects
+  repos         Json?    // Store repositories data as a list
+  issues        Json?    // Store issues data as a list
+  prs           Json?    // Store PR data as a list
+  recentActivity Json?   // Store recent activity data as a list
+
+  // Optional: Add additional fields for GitHub stats like stars, forks, etc.
+  stars         Int?     // Number of stars on repos
+  forks         Int?     // Number of forks on repos
 }
 
 model VerificationToken {
