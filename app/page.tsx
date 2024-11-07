@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-interface GitHubUserData {
+interface UserData {
   avatar_url: string;
   name: string;
   login: string;
@@ -21,28 +23,36 @@ interface GitHubUserData {
 
 export default function Home() {
   const [username, setUsername] = useState("");
-  const [userData, setUserData] = useState<GitHubUserData | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchGitHubData = async () => {
-    if (!username) return;
+    if (!username) {
+      toast.warn("Please enter a GitHub username");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(`https://api.github.com/users/${username}`);
       if (!response.ok) throw new Error("User not found");
-      const data = await response.json();
+
+      const data: UserData = await response.json();
       setUserData(data);
+      toast.success("User data fetched successfully!");
     } catch (error) {
       setError("Error fetching GitHub data. Please check the username.");
       console.error("Error fetching GitHub data:", error);
+      toast.error("Error fetching GitHub data. Please try again.");
     }
     setLoading(false);
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-secondary">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-center space-y-8">
           <div className="text-center space-y-4">

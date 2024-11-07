@@ -1,37 +1,19 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
-
-let prisma: PrismaClient;
-
-if (!global.prisma) {
-  global.prisma = new PrismaClient();
-}
-prisma = global.prisma;
-
-const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+import { authOptions } from "@/lib/auth";  // Import the centralized authOptions
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-      authorization: {
-        params: {
-          scope: 'read:user user:follow',
-        },
-      },
-    }),
-  ],
+  ...authOptions,
   callbacks: {
     async redirect({ url, baseUrl }) {
-      return `${baseUrl}/dashboard`;
+      // Check if the user is coming from the root or login page and force redirect to /dashboard
+      if (url === baseUrl || url === '/') {
+        return `${baseUrl}/dashboard`;  // Redirect to /dashboard after successful login
+      }
+      return url;  // If there's a custom redirect URL, honor it
     },
-    async session({ session, user }) {
+    async session({ session, user }: any) {
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = user.id;  // Attach user ID to the session object
       }
       return session;
     },

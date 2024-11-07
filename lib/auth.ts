@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import GithubProvider from "next-auth/providers/github";
 
+// Initialize Prisma client outside to avoid multiple instances.
 const prisma = new PrismaClient();
 
 export const authOptions = {
@@ -21,6 +22,7 @@ export const authOptions = {
   callbacks: {
     async session({ session, user }: any) {
       if (session.user) {
+        // Attach the user ID to the session object
         session.user.id = user.id;
       }
       return session;
