@@ -1,12 +1,23 @@
-import { getServerSession } from "next-auth";
+// auth.ts
+import { AuthOptions, DefaultSession, getServerSession, Session } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import GithubProvider from "next-auth/providers/github";
+import { JWT } from "next-auth/jwt";
 
-// Initialize Prisma client outside to avoid multiple instances.
 const prisma = new PrismaClient();
 
-export const authOptions = {
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      accessToken: string;
+      githubData?: any;
+    } & DefaultSession["user"];
+  }
+}
+
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
@@ -14,21 +25,31 @@ export const authOptions = {
       clientSecret: process.env.GITHUB_SECRET!,
       authorization: {
         params: {
-          scope: "read:user user:follow repo", // Adjust the scope to fetch followers, repos, etc.
+          scope: "read:user user:follow repo",
         },
       },
     }),
   ],
   callbacks: {
-    async session({ session, user }: { session: any; user: any }) {
+    async jwt({ token, account, user }: { token: JWT; account?: any; user?: any }) {
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: DefaultSession; token: JWT }) {
       if (session.user) {
-        // Attach the user ID to the session object
-        session.user.id = user.id;
+        session.user.id = token.id as string;
+        session.user.accessToken = token.accessToken as string;
 
-        // Fetch the user's GitHub data and attach it to the session
-        const githubData = await fetchGitHubData(user.accessToken); // You need to define this function
-
-        session.user.githubData = githubData;
+        // Fetch and attach the user's GitHub data to the session
+        if (session.user.accessToken) {
+          const githubData = await fetchGitHubData(session.user.accessToken);
+          session.user.githubData = githubData;
+        }
       }
       return session;
     },
@@ -37,7 +58,7 @@ export const authOptions = {
 
 export const getAuthSession = () => getServerSession(authOptions);
 
-// Define the function to fetch the GitHub data
+// Function to fetch GitHub data
 async function fetchGitHubData(accessToken: string) {
   const res = await fetch("https://api.github.com/user", {
     headers: {
@@ -75,7 +96,7 @@ async function fetchGitHubData(accessToken: string) {
   });
   const prs = await prsRes.json();
 
-  const recentActivity = [...followers, ...repos, ...issues, ...prs]; // Example combining activities
+  const recentActivity = [...followers, ...repos, ...issues, ...prs];
 
   return {
     name: userData.name,

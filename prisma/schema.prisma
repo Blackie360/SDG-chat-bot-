@@ -51,9 +51,9 @@ model User {
   prs           Json?    // Store PR data as a list
   recentActivity Json?   // Store recent activity data as a list
 
-  // Optional: Add additional fields for GitHub stats like stars, forks, etc.
   stars         Int?     // Number of stars on repos
   forks         Int?     // Number of forks on repos
+  updatedAt     DateTime  @default(now()) // default value to avoid migration error
 }
 
 model VerificationToken {
