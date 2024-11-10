@@ -1,30 +1,15 @@
-
-import { DefaultSession } from "next-auth";
-
+// 3. Create types/next-auth.d.ts to extend NextAuth types
 declare module "next-auth" {
   interface Session {
     user: {
-      githubData?: {
-        name: string;
-        githubId: string;
-        followers: Array<any>;
-        repos: Array<any>;
-        issues: Array<any>;
-        prs: Array<any>;
-        recentActivity: Array<any>;
-      };
-    };
+      id: string
+      name: string
+      email: string
+      image: string
+      githubId: string
+    }
   }
-
   interface User {
-    githubData?: {
-      name: string;
-      githubId: string;
-      followers: Array<any>;
-      repos: Array<any>;
-      issues: Array<any>;
-      prs: Array<any>;
-      recentActivity: Array<any>;
-    };
+    githubId: string
   }
 }
