@@ -36,22 +36,21 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Responsive header with proper padding */}
       <header className="border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Github className="h-5 w-5 sm:h-6 sm:w-6" />
-              <h1 className="text-lg sm:text-xl font-bold">Git<span className="text-xl sm:text-2xl text-red-600">Sync</span></h1>
+              <Github className="h-6 w-6" />
+              <h1 className="text-xl font-bold">Git<span className='text-2xl text-red-600'>Sync</span></h1>
             </div>
             
             {!authLoading && (
               user ? (
-                <Button onClick={logout} variant="outline" className="text-sm sm:text-base">
+                <Button onClick={logout} variant="outline">
                   Sign Out
                 </Button>
               ) : (
-                <Button onClick={login} variant="default" className="text-sm sm:text-base">
+                <Button onClick={login} variant="default">
                   <Github className="h-4 w-4 mr-2" />
                   Sign in with GitHub
                 </Button>
@@ -61,83 +60,56 @@ function App() {
         </div>
       </header>
 
-      {/* Main content with responsive padding and spacing */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <div className="flex justify-center mb-6 sm:mb-8">
-          <div className="w-full max-w-lg">
-            <SearchBar onSearch={handleSearch} />
-          </div>
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex justify-center mb-8">
+          <SearchBar onSearch={handleSearch} />
         </div>
 
         {dataLoading ? (
           <Loading />
         ) : error ? (
-          <div className="text-center text-destructive p-4">{error.message}</div>
+          <div className="text-center text-destructive">{error.message}</div>
         ) : githubUser ? (
-          <div className="grid gap-4 sm:gap-6 lg:gap-8">
-            {/* User profile with full width */}
-            <div className="w-full">
-              <UserProfile user={githubUser} />
-            </div>
+          <div className="grid gap-8">
+            <UserProfile user={githubUser} />
             
             {repos.length > 0 && (
               <>
-                {/* Stats cards with responsive grid */}
-                <div className="w-full">
-                  <StatsCards repos={repos} />
-                </div>
+                <StatsCards repos={repos} />
                 
-                {/* Two-column layout that stacks on mobile */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                  <div className="w-full">
-                    <LanguageChart languages={languages} />
-                  </div>
-                  <div className="w-full">
-                    <PullRequestAnalytics 
-                      username={githubUser.login} 
-                      token={githubToken ?? undefined}
-                    />
-                  </div>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <LanguageChart languages={languages} />
+                  <PullRequestAnalytics 
+                    username={githubUser.login} 
+                    token={githubToken ?? undefined}
+                  />
                 </div>
 
-                {/* Full-width calendar */}
-                <div className="w-full">
-                  <ContributionCalendar username={githubUser.login} />
+                <ContributionCalendar username={githubUser.login} />
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <LiveCommitFeed 
+                    username={githubUser.login}
+                    token={githubToken ?? undefined}
+                  />
+                  <RepositoryList repos={repos} />
                 </div>
 
-                {/* Two-column layout that stacks on mobile */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                  <div className="w-full">
-                    <LiveCommitFeed 
-                      username={githubUser.login}
-                      token={githubToken ?? undefined}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <RepositoryList repos={repos} />
-                  </div>
-                </div>
-
-                {/* Two-column layout that stacks on mobile */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                  <div className="w-full">
-                    <AccountValue 
-                      repos={repos}
-                      followers={githubUser.followers}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <FollowerAnalysis
-                      username={githubUser.login}
-                      token={githubToken ?? undefined}
-                    />
-                  </div>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <AccountValue 
+                    repos={repos}
+                    followers={githubUser.followers}
+                  />
+                  <FollowerAnalysis
+                    username={githubUser.login}
+                    token={githubToken ?? undefined}
+                  />
                 </div>
               </>
             )}
           </div>
         ) : (
-          <div className="text-center text-muted-foreground p-4">
+          <div className="text-center text-muted-foreground">
             Search for a GitHub user to see their analytics
           </div>
         )}
