@@ -13,6 +13,7 @@ import { AccountValue } from '@/components/account-value';
 import { FollowerAnalysis } from '@/components/follower-analysis';
 import { Button } from '@/components/ui/button';
 import { Github } from 'lucide-react';
+import Loading from './components/Loading';
 
 function App() {
   const { user, loading: authLoading, githubToken, login, logout } = useGitHubAuth();
@@ -40,7 +41,7 @@ function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Github className="h-6 w-6" />
-              <h1 className="text-xl font-bold">Git<span className='text-2xl text-red-600'>Scope</span></h1>
+              <h1 className="text-xl font-bold">Git<span className='text-2xl text-red-600'>Sync</span></h1>
             </div>
             
             {!authLoading && (
@@ -65,7 +66,7 @@ function App() {
         </div>
 
         {dataLoading ? (
-          <div className="text-center">Loading...</div>
+          <Loading />
         ) : error ? (
           <div className="text-center text-destructive">{error.message}</div>
         ) : githubUser ? (
