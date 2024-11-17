@@ -19,7 +19,7 @@ export function AuthButton() {
   if (session) {
     return (
       <Button variant="outline" onClick={() => signOut()}>
-        <img src={session.user?.image!} alt="" className="w-4 h-4 mr-2 rounded-full" />
+        <img src={session.user?.image!} alt="" className="w-4 h-4  rounded-full" />
         Sign Out
       </Button>
     );
