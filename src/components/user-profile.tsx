@@ -17,14 +17,14 @@ interface UserProfileProps {
 
 export function UserProfile({ user }: UserProfileProps) {
   return (
-    <Card className="p-6">
-      <div className="flex items-start gap-6">
-        <Avatar className="h-24 w-24">
+    <Card className="p-6 mx-auto max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center justify-items-center">
+        <Avatar className="h-32 w-32 md:h-24 md:w-24 mb-4">
           <AvatarImage src={user.avatar_url} alt={user.login} />
           <AvatarFallback>{user.login.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         
-        <div className="flex-1">
+        <div className="col-span-3 md:col-span-1 text-center md:text-left">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">{user.name}</h2>
             <a 
@@ -39,7 +39,7 @@ export function UserProfile({ user }: UserProfileProps) {
           
           {user.bio && <p className="text-muted-foreground mb-4">{user.bio}</p>}
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span>{user.followers} followers</span>
