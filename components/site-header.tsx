@@ -3,11 +3,14 @@ import { Button } from "@/components/ui/button"
 
 export function SiteHeader() {
   return (
-    <header className="fixed top-0 z-50 w-full">
-      <div className="container flex h-20 items-center justify-between">
+    <header className="fixed top-0 z-50 w-full bg-black shadow-md">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-8">
+        {/* Logo Section */}
         <Link href="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold text-white">MissionZero</span>
         </Link>
+
+        {/* Navigation Section */}
         <nav className="hidden gap-10 md:flex">
           {["Technology", "About", "Projects", "Lab Notes", "Careers"].map((item) => (
             <Link
@@ -19,7 +22,12 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Button variant="secondary" className="bg-[#E6FF00] text-black hover:bg-[#E6FF00]/90">
+
+        {/* Contact Button */}
+        <Button
+          variant="secondary"
+          className="bg-[#E6FF00] text-black hover:bg-[#E6FF00]/90 transition-colors"
+        >
           Contact
           <svg
             className="ml-2 h-4 w-4"
@@ -39,4 +47,3 @@ export function SiteHeader() {
     </header>
   )
 }
-

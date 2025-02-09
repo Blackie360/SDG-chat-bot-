@@ -1,42 +1,51 @@
 "use client";
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from './ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
 
 interface Project {
   id: number;
   location: string;
   title: string;
   description: string;
+  subtitle?: string;
   metrics: {
     value: string;
     label: string;
   }[];
   imageUrl: string;
+  background?: string;
 }
 
 const projects: Project[] = [
   {
     id: 1,
-    location: 'Canada',
-    title: 'Deep Sky',
-    description: 'Eliminating CO₂\nScaling a world-leading carbon removal hub in Canada that turns CO₂ into rock.',
+    location: "Canada",
+    title: "Deep Sky",
+    subtitle: "Eliminating CO₂",
+    description: "Scaling a world-leading carbon removal hub in Canada that turns CO₂ into rock.",
     metrics: [
-      {
-        value: '250',
-        label: 'Annual removal capacity'
-      },
-      {
-        value: '2024',
-        label: 'Scheduled delivery'
-      }
+      { value: "250tCO₂", label: "Annual removal capacity" },
+      { value: "2024", label: "Scheduled delivery" },
     ],
-    imageUrl: '/project-image.jpg' // Replace with your image path
+    imageUrl: "/deep-sky.jpg",
+    background: "bg-slate-400",
   },
-  // Add more projects as needed
+  {
+    id: 2,
+    location: "UK",
+    title: "O.C.O Technology",
+    subtitle: "Building with air",
+    description: "Developing pathways to turn historic CO₂ into carbon-negative building materials.",
+    metrics: [
+      { value: "250tCO₂", label: "Annual removal capacity" },
+      { value: "2024", label: "Scheduled delivery" },
+    ],
+    imageUrl: "/oco-tech.jpg",
+    background: "bg-gray-200",
+  }
 ];
 
 const ProjectCarousel = () => {
@@ -46,38 +55,30 @@ const ProjectCarousel = () => {
   const slideVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 1000 : -1000,
-      opacity: 0
+      opacity: 0,
     }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
+    center: { zIndex: 1, x: 0, opacity: 1 },
     exit: (direction: number) => ({
       zIndex: 0,
       x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    })
+      opacity: 0,
+    }),
   };
 
   const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset: number, velocity: number) => {
-    return Math.abs(offset) * velocity;
-  };
+  const swipePower = (offset: number, velocity: number) =>
+    Math.abs(offset) * velocity;
 
   const paginate = (newDirection: number) => {
     setDirection(newDirection);
-    setCurrentIndex((prevIndex) => {
-      const nextIndex = prevIndex + newDirection;
-      if (nextIndex < 0) return projects.length - 1;
-      if (nextIndex >= projects.length) return 0;
-      return nextIndex;
-    });
+    setCurrentIndex((prevIndex) =>
+      (prevIndex + newDirection + projects.length) % projects.length
+    );
   };
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto px-4 py-8">
-      <div className="overflow-hidden relative h-[600px] md:h-[700px] rounded-xl">
+    <div className="relative w-full max-w-7xl mx-auto px-4 py-8">
+      <div className="overflow-hidden relative h-[600px] md:h-[700px] rounded-3xl">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={currentIndex}
@@ -88,56 +89,73 @@ const ProjectCarousel = () => {
             exit="exit"
             transition={{
               x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 }
+              opacity: { duration: 0.2 },
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={1}
             onDragEnd={(e, { offset, velocity }) => {
               const swipe = swipePower(offset.x, velocity.x);
-              if (swipe < -swipeConfidenceThreshold) {
-                paginate(1);
-              } else if (swipe > swipeConfidenceThreshold) {
-                paginate(-1);
-              }
+              if (swipe < -swipeConfidenceThreshold) paginate(1);
+              else if (swipe > swipeConfidenceThreshold) paginate(-1);
             }}
             className="absolute w-full h-full"
           >
-            <Card className="w-full h-full overflow-hidden">
+            <Card className="w-full h-full overflow-hidden border-0 shadow-none">
               <CardContent className="p-0 h-full">
                 <div className="grid md:grid-cols-2 h-full">
-                  <div className="p-8 md:p-12 flex flex-col justify-center bg-slate-100">
-                    <div className="space-y-6">
+                  <div className={`p-12 md:p-16 flex flex-col justify-center ${projects[currentIndex].background}`}>
+                    <div className="space-y-8">
                       <span className="inline-block px-4 py-1.5 rounded-full bg-white text-sm font-medium">
                         {projects[currentIndex].location}
                       </span>
-                      <h2 className="text-4xl md:text-6xl font-bold">
-                        {projects[currentIndex].title}
-                      </h2>
-                      <p className="text-lg md:text-xl text-gray-600 whitespace-pre-line">
-                        {projects[currentIndex].description}
-                      </p>
-                      <div className="grid grid-cols-2 gap-4 mt-8">
+                      <div className="space-y-4">
+                        <h2 className="text-5xl md:text-7xl font-bold text-white">
+                          {projects[currentIndex].title}
+                        </h2>
+                        {projects[currentIndex].subtitle && (
+                          <h3 className="text-3xl md:text-4xl font-bold text-white">
+                            {projects[currentIndex].subtitle}
+                          </h3>
+                        )}
+                        <p className="text-lg md:text-xl text-white/90">
+                          {projects[currentIndex].description}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-8 mt-8">
                         {projects[currentIndex].metrics.map((metric, idx) => (
                           <div key={idx} className="space-y-2">
-                            <div className="text-4xl font-bold">{metric.value}</div>
-                            <div className="text-sm text-gray-600">{metric.label}</div>
+                            <div className="text-4xl font-bold text-white">
+                              {metric.value}
+                            </div>
+                            <div className="text-sm text-white/80">
+                              {metric.label}
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                  <div 
-                    className="h-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${projects[currentIndex].imageUrl})` }}
-                  />
+                  <div
+                    className="h-full bg-cover bg-center relative"
+                    style={{
+                      backgroundImage: `url(${projects[currentIndex].imageUrl})`,
+                    }}
+                  >
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                      <Button
+                        className="w-24 h-24 rounded-full bg-[#E5FF44] hover:bg-[#E5FF44]/90 text-black"
+                      >
+                        View
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
         </AnimatePresence>
       </div>
-
       <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4">
         <Button
           variant="outline"

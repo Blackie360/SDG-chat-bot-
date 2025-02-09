@@ -51,7 +51,7 @@ export function ScrollSection() {
       style={{ height: `${scrollRange + clientHeight * 4}px` }} // Use clientHeight from state
     >
       <div className="sticky top-0 h-screen overflow-hidden">
-        <motion.div style={{ opacity, scale, y }} className="flex h-full flex-col items-center justify-center px-4">
+        <motion.div style={{ ...{ opacity, scale, y } }} className="flex h-full flex-col items-center justify-center px-4">
           <div className="container max-w-6xl">
             <div className="mx-auto mb-12 w-full max-w-3xl">
               <svg viewBox="0 0 400 100" className="w-full stroke-white/20" fill="none" strokeWidth="1">
@@ -62,7 +62,7 @@ export function ScrollSection() {
               </svg>
             </div>
             <h2 className="text-balance text-center text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              The world's most versatile direct air capture technology
+              The world&apos;s most versatile direct air capture technology
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-white/70">
               Our plug-and-play electrochemical solution can efficiently recover historic CO<sub>2</sub> emissions
