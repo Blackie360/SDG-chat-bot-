@@ -1,11 +1,10 @@
 "use client"
 
-import { useRef } from "react"
 import { useScroll, useTransform } from "framer-motion"
-import { ProjectCarousel } from "@/components/project-carousel"
-import { useHorizontalScroll } from "./use-horizontal-scroll"
+import { useRef } from "react"
 import { ScrollHero } from "./scroll-hero"
 import { SolutionsSection } from "./solutions-section"
+import { useHorizontalScroll } from "./use-horizontal-scroll"
 
 export function ScrollSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -35,9 +34,7 @@ export function ScrollSection() {
         <SolutionsSection style={{ x }} horizontalRef={horizontalRef} />
       </div>
 
-      <div className="relative h-screen">
-        <ProjectCarousel />
-      </div>
+      
     </section>
   )
 }

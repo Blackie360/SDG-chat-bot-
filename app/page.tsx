@@ -6,6 +6,7 @@ import { PlantSection } from "@/components/plant-section"
 import { CtaSection } from "@/components/cta-section"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
+import { ProjectCarousel } from "@/components/project-carousel"
 
 export default function Home() {
   return (
@@ -50,6 +51,9 @@ export default function Home() {
 
       <CarbonSection />
       <ScrollSection />
+      <div className="relative h-screen">
+        <ProjectCarousel />
+      </div>
       <LabNotesSection />
       <PlantSection />
       <CtaSection />

@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 interface SolutionCardProps {
   title: string
   description: string
@@ -10,8 +12,10 @@ export function SolutionCard({ title, description, image }: SolutionCardProps) {
       className="group relative aspect-square flex-none overflow-hidden rounded-3xl bg-black"
       style={{ width: "min(400px, 80vw)" }}
     >
-      <img
-        src={image || "/placeholder.svg"}
+      <Image
+        src="/plant.jpg"
+        width={400}
+        height={400}
         alt={title}
         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
